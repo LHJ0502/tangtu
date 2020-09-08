@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LIU.Framework.Core.Base;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace LIU.Tangtu.Domian.Sys
 {
-    public class UserInfo
+    public class UserInfo: IEntity
     {
         /// <summary>
         /// 主键

@@ -22,6 +22,7 @@ namespace LIU.Framework.Core.Data
 
         public DbConnection dbConnection { get; }
 
+        ///<inheritdoc/>
         public IDbContext Add<TEntity>(IEnumerable<TEntity> entityObjects) where TEntity : class
         {
             foreach (var item in entityObjects)
@@ -99,6 +100,16 @@ namespace LIU.Framework.Core.Data
         {
             this.Update<TEntity>(entity);
             return this;
+        }
+
+        /// <summary>
+        /// 使用 fluent API 配置模型
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            AppInstance.Current.Finder.FindTypes(p => p.IsClass && p.GetInterfaces().Contains(typeof(IEntityMap)));
+          
         }
     }
 }

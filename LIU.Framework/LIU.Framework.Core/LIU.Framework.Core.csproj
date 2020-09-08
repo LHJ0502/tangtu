@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Bus\" />
+  </ItemGroup>
+
 </Project>
