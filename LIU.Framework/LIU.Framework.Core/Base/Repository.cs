@@ -32,67 +32,63 @@ namespace LIU.Framework.Core.Base
         /// <inheritdoc/>
         public bool Add(T entity)
         {
-            throw new NotImplementedException();
+            Context.Add<T>(entity);
+            return Context.Commit() > 0;
         }
 
         /// <inheritdoc/>
         public int Add(IEnumerable<T> entities)
         {
-            throw new NotImplementedException();
+            Context.Add<T>(entities);
+            return Context.Commit();
         }
 
         /// <inheritdoc/>
         public bool Delete(T entity)
         {
-            throw new NotImplementedException();
+            Context.Delete<T>(entity);
+            return Context.Commit() > 0;
         }
 
-        /// <inheritdoc/>
-        public bool Delete(params object[] keys)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <inheritdoc/>
         public int Delete(IEnumerable<T> entities)
         {
-            throw new NotImplementedException();
+            Context.Delete<T>(entities);
+            return Context.Commit();
         }
 
         /// <inheritdoc/>
         public bool Exists(Expression<Func<T, bool>> condition)
         {
-            throw new NotImplementedException();
+            return Context.Table<T>().Where(condition).Count() > 0;
         }
 
         /// <inheritdoc/>
         public IQueryable<T> Find()
         {
-            throw new NotImplementedException();
+            return Context.Table<T>();
         }
 
         /// <inheritdoc/>
         public T FindByKeys(params object[] keys)
         {
-            throw new NotImplementedException();
+            return Context.FindByKeys<T>(keys);
         }
 
         /// <inheritdoc/>
         public bool Update(T entity)
         {
-            throw new NotImplementedException();
+            Context.Update<T>(entity);
+            return Context.Commit() > 0;
         }
 
         /// <inheritdoc/>
         public int Update(IEnumerable<T> entities)
         {
-            throw new NotImplementedException();
+            Context.Update<T>(entities);
+            return Context.Commit();
         }
 
-        /// <inheritdoc/>
-        public bool Update(object key, Action<T> action)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

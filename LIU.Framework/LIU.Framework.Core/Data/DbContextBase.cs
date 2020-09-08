@@ -15,6 +15,7 @@ namespace LIU.Framework.Core.Data
         {
             this.dbConnection = Database.GetDbConnection();
             this.ConnectionString = dbConnection.ConnectionString;
+
         }
 
         public string ConnectionString { get; }
@@ -30,11 +31,13 @@ namespace LIU.Framework.Core.Data
             return this;
         }
 
+        ///<inheritdoc/>
         public int Commit()
         {
             return SaveChanges();
         }
 
+        ///<inheritdoc/>
         public IDbContext Delete<TEntity>(IEnumerable<TEntity> entityObjects) where TEntity : class
         {
             foreach (var item in entityObjects)
@@ -44,6 +47,7 @@ namespace LIU.Framework.Core.Data
             return this;
         }
 
+        ///<inheritdoc/>
         public IDbContext Delete<TEntity>(TEntity entity) where TEntity : class
         {
             if (entity != null)
@@ -54,12 +58,13 @@ namespace LIU.Framework.Core.Data
             return this;
         }
 
+        ///<inheritdoc/>
         public TEntity FindByKeys<TEntity>(params object[] keys) where TEntity : class
         {
             return this.Set<TEntity>().Find(keys);
         }
 
-
+        ///<inheritdoc/>
         public IQueryable<TEntity> Table<TEntity>(bool trackable = false) where TEntity : class
         {
             if (trackable)
@@ -72,6 +77,7 @@ namespace LIU.Framework.Core.Data
             }
         }
 
+        ///<inheritdoc/>
         public IDbContext Update<TEntity>(IEnumerable<TEntity> entityObjects) where TEntity : class
         {
             foreach (var item in entityObjects)
@@ -81,12 +87,14 @@ namespace LIU.Framework.Core.Data
             return this;
         }
 
+        ///<inheritdoc/>
         IDbContext IDbContext.Add<TEntity>(TEntity entity)
         {
             this.Add<TEntity>(entity);
             return this;
         }
 
+        ///<inheritdoc/>
         IDbContext IDbContext.Update<TEntity>(TEntity entity)
         {
             this.Update<TEntity>(entity);

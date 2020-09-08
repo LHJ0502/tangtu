@@ -22,8 +22,6 @@ namespace LIU.Tangtu.Web
         }
 
         public IConfiguration Configuration { get; }
-        //autofac ÐÂÔö
-        public ILifetimeScope AutofacContainer { get; private set; }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -62,6 +60,9 @@ namespace LIU.Tangtu.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+
+            AppInstance.Current.SetContainer(app.ApplicationServices.GetAutofacRoot());
         }
     }
 }

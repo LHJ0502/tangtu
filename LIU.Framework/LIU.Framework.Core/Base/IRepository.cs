@@ -32,12 +32,8 @@ namespace LIU.Framework.Core.Base
         bool Update(T entity);
         /// <summary> 更新多条记录 </summary>
         int Update(IEnumerable<T> entities);
-        /// <summary> 使用指定更新行为，更新指定键的记录 </summary>
-        bool Update(object key, Action<T> action);
         /// <summary> 删除一条记录 </summary>
         bool Delete(T entity);
-        /// <summary> 根据指定的键删除一条记录 </summary>
-        bool Delete(params object[] keys);
         /// <summary> 删除多条记录 </summary>
         int Delete(IEnumerable<T> entities);
         /// <summary> 判断是否存在满足指定条件的记录 </summary>

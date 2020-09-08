@@ -35,7 +35,7 @@ namespace LIU.Framework.Core
         /// <summary>
         /// 依赖注入容器
         /// </summary>
-        public IContainer Container { get; private set; }
+        public ILifetimeScope Container { get; private set; }
 
         //public ContainerBuilder Builder
         //{
@@ -90,13 +90,33 @@ namespace LIU.Framework.Core
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public AppInstance AppBuilder(ContainerBuilder builder)
+        public AppInstance AppBuilder(ContainerBuilder builder, bool isBuild = false)
         {
             _builder = builder ?? _builder ?? new ContainerBuilder();
 
-            Container = _builder.Build();
-            context = Container.Resolve<IComponentContext>();
-            isBuilded = true;
+            if (isBuild)
+            {
+                Container = _builder.Build();
+                context = Container.Resolve<IComponentContext>();
+                isBuilded = true;
+            }
+            return this;
+        }
+
+
+        /// <summary>
+        /// 设置容器
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public AppInstance SetContainer(ILifetimeScope container)
+        {
+            if (Container == null && container != null)
+            {
+                Container = container;
+                context = Container.Resolve<IComponentContext>();
+                isBuilded = true;
+            }
             return this;
         }
     }
