@@ -1,9 +1,12 @@
 ﻿using Autofac;
 using LIU.Framework.Core.Base;
+using LIU.Framework.Core.Bus;
 using LIU.Framework.Core.Data;
 using LIU.Framework.Core.Inject;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace LIU.Framework.Core
@@ -81,7 +84,7 @@ namespace LIU.Framework.Core
         /// </summary>
         /// <param name="finder"></param>
         /// <returns></returns>
-        public AppInstance Init(ITypeFinder finder)
+        public virtual AppInstance Init(ITypeFinder finder)
         {
             Finder = finder;
             return this;
@@ -92,11 +95,24 @@ namespace LIU.Framework.Core
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public AppInstance AppBuilder(ContainerBuilder builder, bool isBuild = false)
+        public virtual AppInstance AppBuilder(ContainerBuilder builder, bool isBuild = false)
         {
             _builder = builder ?? _builder ?? new ContainerBuilder();
             //注入
-            _builder.RegisterType<IDbContext>().As<DbContextBase>().InstancePerLifetimeScope();//目前单数据库，后期可以考虑使用工厂代替
+            _builder.RegisterType<DbContextBase>().As<IDbContext>().InstancePerLifetimeScope();//目前单数据库，后期可以考虑使用工厂代替
+
+            _builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
+
+            //var types = Finder.FindTypes(p => p.IsAssignableFrom(typeof(IContractService)) && p != typeof(IContractService) && p.IsClass && !p.IsAbstract).ToArray();
+            var types = Finder.FindTypes(p => p.GetInterfaces().Contains(typeof(IContractService)) && p != typeof(IContractService) && p.IsClass && !p.IsAbstract).ToArray();
+
+            if (types.Any())
+            {
+                _builder.RegisterTypes(types)?.AsImplementedInterfaces().InstancePerLifetimeScope();
+            }
+            _builder.RegisterType<RepositoryBus>().As<IRepositoryBus>().InstancePerLifetimeScope();
+            _builder.RegisterType<ServiceBus>().As<IServiceBus>().InstancePerLifetimeScope();
+
             if (isBuild)
             {
                 Container = _builder.Build();
@@ -112,7 +128,7 @@ namespace LIU.Framework.Core
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public AppInstance SetContainer(ILifetimeScope container)
+        public virtual AppInstance SetContainer(ILifetimeScope container)
         {
             if (Container == null && container != null)
             {
@@ -121,6 +137,21 @@ namespace LIU.Framework.Core
                 isBuilded = true;
             }
             return this;
+        }
+
+
+        /// <summary>
+        /// 从容器中获取一个服务
+        /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <returns></returns>
+        public virtual TService Resolve<TService>() where TService : class
+        {
+            if (!this.isBuilded)
+            {
+                throw new Exception("实例尚未完成创建。");
+            }
+            return context.Resolve<TService>();
         }
     }
 }

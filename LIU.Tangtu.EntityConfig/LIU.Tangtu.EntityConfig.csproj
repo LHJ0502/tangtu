@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LIU.Framework\LIU.Framework.Core\LIU.Framework.Core.csproj" />
+    <ProjectReference Include="..\LIU.Tangtu.Domian\LIU.Tangtu.Domian.csproj" />
   </ItemGroup>
 
 </Project>

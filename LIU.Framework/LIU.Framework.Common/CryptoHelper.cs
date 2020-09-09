@@ -15,7 +15,7 @@ namespace LIU.Framework.Common
         /// <summary>
         /// 公共秘钥
         /// </summary>
-        public const string commonKey = "liuhaojie_940502";
+        private const string commonKey = "liuhaojie_940502";
 
         /// <summary>
         ///  AES 加密

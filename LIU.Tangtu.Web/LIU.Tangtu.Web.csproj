@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LIU.Framework\LIU.Framework.Core\LIU.Framework.Core.csproj" />
+    <ProjectReference Include="..\LIU.Tangtu.IServices\LIU.Tangtu.IServices.csproj" />
   </ItemGroup>
 
 

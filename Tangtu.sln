@@ -11,15 +11,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Framework.Core", "LIU.F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Framework.Common", "LIU.Framework\LIU.Framework.Common\LIU.Framework.Common.csproj", "{FCAD4E74-0A4D-4B36-84B7-199D92227CE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIU.Tangtu.IRepository", "LIU.Tangtu.IRepository\LIU.Tangtu.IRepository.csproj", "{F6A33D2A-B723-4EBF-B3A2-EF2932ACF46F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Tangtu.IRepository", "LIU.Tangtu.IRepository\LIU.Tangtu.IRepository.csproj", "{F6A33D2A-B723-4EBF-B3A2-EF2932ACF46F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIU.Tangtu.Repository", "LIU.Tangtu.Repository\LIU.Tangtu.Repository.csproj", "{97FB999B-5C24-498C-8137-248F08A08F4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Tangtu.Repository", "LIU.Tangtu.Repository\LIU.Tangtu.Repository.csproj", "{97FB999B-5C24-498C-8137-248F08A08F4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIU.Tangtu.Services", "LIU.Tangtu.Services\LIU.Tangtu.Services.csproj", "{A4A8F264-E476-440C-B465-7226F310FEE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Tangtu.Services", "LIU.Tangtu.Services\LIU.Tangtu.Services.csproj", "{A4A8F264-E476-440C-B465-7226F310FEE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIU.Tangtu.IServices", "LIU.Tangtu.IServices\LIU.Tangtu.IServices.csproj", "{E5BE2114-861E-42FE-92F2-84569F308FDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Tangtu.IServices", "LIU.Tangtu.IServices\LIU.Tangtu.IServices.csproj", "{E5BE2114-861E-42FE-92F2-84569F308FDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIU.Tangtu.Domian", "LIU.Tangtu.Domian\LIU.Tangtu.Domian.csproj", "{F9827EF6-F62C-45EB-A1A5-309CF1C64916}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Tangtu.Domian", "LIU.Tangtu.Domian\LIU.Tangtu.Domian.csproj", "{F9827EF6-F62C-45EB-A1A5-309CF1C64916}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIU.Tangtu.EntityConfig", "LIU.Tangtu.EntityConfig\LIU.Tangtu.EntityConfig.csproj", "{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{F9827EF6-F62C-45EB-A1A5-309CF1C64916}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9827EF6-F62C-45EB-A1A5-309CF1C64916}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9827EF6-F62C-45EB-A1A5-309CF1C64916}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

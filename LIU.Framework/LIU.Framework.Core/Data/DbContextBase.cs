@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LIU.Framework.Common;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace LIU.Framework.Core.Data
@@ -11,14 +13,14 @@ namespace LIU.Framework.Core.Data
     public class DbContextBase : DbContext, IDbContext
     {
 
-        public DbContextBase(DbContextOptions<DbContextBase> options) : base(options)
-        {
-            this.dbConnection = Database.GetDbConnection();
-            this.ConnectionString = dbConnection.ConnectionString;
+        //public DbContextBase(DbContextOptions<DbContextBase> options) : base(options)
+        //{
+        //    this.dbConnection = Database.GetDbConnection();
+        //    this.ConnectionString = dbConnection.ConnectionString;
 
-        }
+        //}
 
-        public string ConnectionString { get; }
+        public string ConnectionString { get; } = "jCBoUm8/Y7UYBYVJ1tNRxMsooJ6kwhYMjW2g4K7yIpoXV6CCdsJaY0H2u4dcPnG7xLj1NpBXiS8lo/1viYUjEIKfTw9eU24YDkbSd6pOSosWruT5nNZpVz1UT2loDMNOQiX9LwUSg/rIsfxOUpON5wfsEOLxArsRoHrS/mExhAItneTqnKnAI7JkAv17KeU6njAzDYG7Qr/v7H+ftneSGCPGcMoQ9Oo4M4cQkyp1uhw=";
 
         public DbConnection dbConnection { get; }
 
@@ -108,8 +110,22 @@ namespace LIU.Framework.Core.Data
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            AppInstance.Current.Finder.FindTypes(p => p.IsClass && p.GetInterfaces().Contains(typeof(IEntityMap)));
-          
+            base.OnModelCreating(modelBuilder);
+            var applyGenericMethod = typeof(ModelBuilder).GetMethods( BindingFlags.Instance | BindingFlags.Public);
+            var list = AppInstance.Current.Finder.FindTypes(p => p.IsAssignableFrom(typeof(IEntityMap)) && p != typeof(IEntityMap) && p.IsClass && !p.IsAbstract).ToArray();
+            foreach (var item in list)
+            {
+                var iface = item.GetInterfaces().Where(p => p.IsConstructedGenericType && p.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>)).First();
+                var applyConcreteMethod = applyGenericMethod.MakeGenericMethod(iface.GenericTypeArguments[0]);
+                applyConcreteMethod.Invoke(modelBuilder, new object[] { Activator.CreateInstance(item) });
+            }
+
+        }
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(CryptoHelper.AesDecrypt(ConnectionString));
         }
     }
 }
