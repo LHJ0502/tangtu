@@ -19,6 +19,16 @@ namespace LIU.Framework.Core.Data
         //    this.ConnectionString = dbConnection.ConnectionString;
 
         //}
+        private static MethodInfo applyGenericMethod;
+
+        public DbContextBase()
+        {
+            if (applyGenericMethod == null)
+            {
+                applyGenericMethod = typeof(ModelBuilder).GetMethods(BindingFlags.Instance | BindingFlags.Public).Where
+                    (p => p.Name == "ApplyConfiguration" && p.GetParameters().FirstOrDefault().ParameterType.Name.Contains("IEntityTypeConfiguration")).FirstOrDefault();
+            }
+        }
 
         public string ConnectionString { get; } = "jCBoUm8/Y7UYBYVJ1tNRxMsooJ6kwhYMjW2g4K7yIpoXV6CCdsJaY0H2u4dcPnG7xLj1NpBXiS8lo/1viYUjEIKfTw9eU24YDkbSd6pOSosWruT5nNZpVz1UT2loDMNOQiX9LwUSg/rIsfxOUpON5wfsEOLxArsRoHrS/mExhAItneTqnKnAI7JkAv17KeU6njAzDYG7Qr/v7H+ftneSGCPGcMoQ9Oo4M4cQkyp1uhw=";
 
@@ -111,7 +121,7 @@ namespace LIU.Framework.Core.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            var applyGenericMethod = typeof(ModelBuilder).GetMethods( BindingFlags.Instance | BindingFlags.Public);
+
             var list = AppInstance.Current.Finder.FindTypes(p => p.IsAssignableFrom(typeof(IEntityMap)) && p != typeof(IEntityMap) && p.IsClass && !p.IsAbstract).ToArray();
             foreach (var item in list)
             {
