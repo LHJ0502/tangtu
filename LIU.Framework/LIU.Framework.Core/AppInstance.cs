@@ -110,6 +110,13 @@ namespace LIU.Framework.Core
             {
                 _builder.RegisterTypes(types)?.AsImplementedInterfaces().InstancePerLifetimeScope();
             }
+
+            types = Finder.FindTypes(p => p.GetInterfaces().Contains(typeof(IEntityMap)) && p != typeof(IEntityMap) && p.IsClass && !p.IsAbstract).ToArray();
+            if (types.Any())
+            {
+                _builder.RegisterTypes(types)?.AsImplementedInterfaces().SingleInstance();
+            }
+
             _builder.RegisterType<RepositoryBus>().As<IRepositoryBus>().InstancePerLifetimeScope();
             _builder.RegisterType<ServiceBus>().As<IServiceBus>().InstancePerLifetimeScope();
 
@@ -152,6 +159,20 @@ namespace LIU.Framework.Core
                 throw new Exception("实例尚未完成创建。");
             }
             return context.Resolve<TService>();
+        }
+
+        /// <summary>
+        /// 从容器中获取一个服务集合
+        /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <returns></returns>
+        public virtual IEnumerable<TService> ResolveALL<TService>() where TService : class
+        {
+            if (!this.isBuilded)
+            {
+                throw new Exception("实例尚未完成创建。");
+            }
+            return context.ResolveOptional<IEnumerable<TService>>();
         }
     }
 }

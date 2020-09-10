@@ -14,5 +14,10 @@ namespace LIU.Framework.Core.Data
         /// </summary>
         /// <param name="builder"></param>
         public abstract void Configure(EntityTypeBuilder<T> builder);
+
+        public void Config(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration<T>(this);
+        }
     }
 }

@@ -19,14 +19,16 @@ namespace LIU.Framework.Core.Data
         //    this.ConnectionString = dbConnection.ConnectionString;
 
         //}
-        private static MethodInfo applyGenericMethod;
+        private static MethodInfo applyConcreteMethod;
 
         public DbContextBase()
         {
-            if (applyGenericMethod == null)
+            if (applyConcreteMethod == null)
             {
-                applyGenericMethod = typeof(ModelBuilder).GetMethods(BindingFlags.Instance | BindingFlags.Public).Where
-                    (p => p.Name == "ApplyConfiguration" && p.GetParameters().FirstOrDefault().ParameterType.Name.Contains("IEntityTypeConfiguration")).FirstOrDefault();
+                //applyConcreteMethod = typeof(ModelBuilder).GetMethods(BindingFlags.Instance | BindingFlags.Public).Where
+                //    (p => p.Name == "ApplyConfiguration" && p.GetParameters().FirstOrDefault().ParameterType.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>)).FirstOrDefault();
+
+                applyConcreteMethod = typeof(ModelBuilder).GetMethods().Single(p => p.Name == "ApplyConfiguration" && p.GetParameters().SingleOrDefault().ParameterType.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>));
             }
         }
 
@@ -114,22 +116,35 @@ namespace LIU.Framework.Core.Data
             return this;
         }
 
+        ///// <summary>
+        ///// 使用 fluent API 配置模型
+        ///// </summary>
+        ///// <param name="modelBuilder"></param>
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    var list = AppInstance.Current.Finder.FindTypes(p => p.GetInterfaces().Contains(typeof(IEntityMap)) && p != typeof(IEntityMap) && p.IsClass && !p.IsAbstract).ToArray();
+        //    //AppInstance.Current.Finder.FindTypes(p => p.IsAssignableFrom(typeof(IEntityMap)) && p != typeof(IEntityMap) && p.IsClass && !p.IsAbstract).ToArray();
+
+        //    foreach (var item in list)
+        //    {
+        //        object obj = Activator.CreateInstance(item);
+        //        applyConcreteMethod.Invoke(modelBuilder, new object[] { });
+        //    }
+        //    base.OnModelCreating(modelBuilder);
+        //}
+
         /// <summary>
         /// 使用 fluent API 配置模型
         /// </summary>
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            var list = AppInstance.Current.Finder.FindTypes(p => p.IsAssignableFrom(typeof(IEntityMap)) && p != typeof(IEntityMap) && p.IsClass && !p.IsAbstract).ToArray();
+            var list = AppInstance.Current.ResolveALL<IEntityMap>();
             foreach (var item in list)
             {
-                var iface = item.GetInterfaces().Where(p => p.IsConstructedGenericType && p.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>)).First();
-                var applyConcreteMethod = applyGenericMethod.MakeGenericMethod(iface.GenericTypeArguments[0]);
-                applyConcreteMethod.Invoke(modelBuilder, new object[] { Activator.CreateInstance(item) });
+                item.Config(modelBuilder);
             }
-
+            base.OnModelCreating(modelBuilder);
         }
 
 

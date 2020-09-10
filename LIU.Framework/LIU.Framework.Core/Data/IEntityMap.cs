@@ -11,6 +11,7 @@ namespace LIU.Framework.Core.Data
     /// </summary>
     public interface IEntityMap
     {
+        void Config(ModelBuilder modelBuilder);
     }
 
     /// <summary>
