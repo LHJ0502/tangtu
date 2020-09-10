@@ -1,9 +1,12 @@
 ﻿using LIU.Framework.Common;
+using LIU.Framework.Common.Extend;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -19,20 +22,29 @@ namespace LIU.Framework.Core.Data
         //    this.ConnectionString = dbConnection.ConnectionString;
 
         //}
-        private static MethodInfo applyConcreteMethod;
+        //private static MethodInfo applyConcreteMethod;
 
         public DbContextBase()
         {
-            if (applyConcreteMethod == null)
-            {
-                //applyConcreteMethod = typeof(ModelBuilder).GetMethods(BindingFlags.Instance | BindingFlags.Public).Where
-                //    (p => p.Name == "ApplyConfiguration" && p.GetParameters().FirstOrDefault().ParameterType.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>)).FirstOrDefault();
+            //if (applyConcreteMethod == null)
+            //{
+            //    //applyConcreteMethod = typeof(ModelBuilder).GetMethods(BindingFlags.Instance | BindingFlags.Public).Where
+            //    //    (p => p.Name == "ApplyConfiguration" && p.GetParameters().FirstOrDefault().ParameterType.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>)).FirstOrDefault();
 
-                applyConcreteMethod = typeof(ModelBuilder).GetMethods().Single(p => p.Name == "ApplyConfiguration" && p.GetParameters().SingleOrDefault().ParameterType.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>));
+            //    applyConcreteMethod = typeof(ModelBuilder).GetMethods().Single(p => p.Name == "ApplyConfiguration" && p.GetParameters().SingleOrDefault().ParameterType.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>));
+            //}
+            if (ConnectionString.IsNullOrWhiteSpace())
+            {
+                FileInfo fileInfo = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Config\conn.json"));
+                using (var s = fileInfo.OpenText())
+                {
+                    var json = JsonConvert.DeserializeObject<dynamic>(s.ReadToEnd());
+                    ConnectionString = CryptoHelper.AesDecrypt((string)(json.DB));
+                }
             }
         }
 
-        public string ConnectionString { get; } = "jCBoUm8/Y7UYBYVJ1tNRxMsooJ6kwhYMjW2g4K7yIpoXV6CCdsJaY0H2u4dcPnG7xLj1NpBXiS8lo/1viYUjEIKfTw9eU24YDkbSd6pOSosWruT5nNZpVz1UT2loDMNOQiX9LwUSg/rIsfxOUpON5wfsEOLxArsRoHrS/mExhAItneTqnKnAI7JkAv17KeU6njAzDYG7Qr/v7H+ftneSGCPGcMoQ9Oo4M4cQkyp1uhw=";
+        public string ConnectionString { get; }
 
         public DbConnection dbConnection { get; }
 
@@ -150,7 +162,7 @@ namespace LIU.Framework.Core.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(CryptoHelper.AesDecrypt(ConnectionString));
+            optionsBuilder.UseSqlServer(ConnectionString);
         }
     }
 }

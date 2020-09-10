@@ -15,4 +15,10 @@
     <ProjectReference Include="..\LIU.Framework.Common\LIU.Framework.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Config\conn.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
