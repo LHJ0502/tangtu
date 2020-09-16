@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -25,7 +27,11 @@ namespace LIU.Tangtu.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            //services.AddControllersWithViews();
+            services.AddMvc().AddJsonOptions(p =>
+            {
+                p.JsonSerializerOptions.Converters.Add(new DatetimeJsonConverter());
+            });
 
         }
         public void ConfigureContainer(ContainerBuilder builder)
@@ -49,7 +55,6 @@ namespace LIU.Tangtu.Web
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseAuthorization();
@@ -63,6 +68,25 @@ namespace LIU.Tangtu.Web
 
 
             AppInstance.Current.SetContainer(app.ApplicationServices.GetAutofacRoot());
+        }
+    }
+
+
+    public class DatetimeJsonConverter : JsonConverter<DateTime>
+    {
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                if (DateTime.TryParse(reader.GetString(), out DateTime date))
+                    return date;
+            }
+            return reader.GetDateTime();
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString("yyyy-MM-dd HH:mm:ss"));
         }
     }
 }

@@ -11,6 +11,8 @@ using LIU.Tangtu.IServices.Sys;
 
 namespace LIU.Tangtu.Web.Controllers
 {
+
+    [Route("api/{Controller}")]
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
@@ -21,26 +23,12 @@ namespace LIU.Tangtu.Web.Controllers
             userInfoService = ServiceBus.Get<IUserInfoService>();
         }
 
-        public IActionResult GetUser()
+        [Route("GetUser")]
+        public async Task<Result> GetUser()
         {
-            return Json(userInfoService.GetUsers(p => true));
+            return await Result.OKAsync(userInfoService.GetUsers(p => true));
         }
 
-        public IActionResult Index()
-        {
-            _logger.LogInformation("测试日志");
-            return View();
-        }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

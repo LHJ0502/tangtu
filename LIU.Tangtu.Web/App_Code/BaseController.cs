@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace LIU.Tangtu.Web.App_Code
 {
-    public class BaseController : Controller
+    [ApiController]
+    public class BaseController : ControllerBase
     {
         public readonly IServiceBus ServiceBus;
 
@@ -16,5 +17,8 @@ namespace LIU.Tangtu.Web.App_Code
         {
             ServiceBus = AppInstance.Current.Resolve<IServiceBus>();
         }
+
+
+
     }
 }

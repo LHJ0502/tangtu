@@ -14,6 +14,10 @@
     <ProjectReference Include="..\LIU.Tangtu.IServices\LIU.Tangtu.IServices.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
+
 
 
 </Project>
