@@ -14,7 +14,7 @@ namespace LIU.Tangtu.Web.Controllers
 {
 
     [Route("api/{Controller}")]
-    public class HomeController : BaseController
+    public class HomeController : AuthBaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUserInfoService userInfoService;
@@ -27,10 +27,11 @@ namespace LIU.Tangtu.Web.Controllers
         [Route("GetUser")]
         public async Task<Result> GetUser()
         {
-            return await Result.OKAsync(userInfoService.GetUsers(p => true));
+            return await Result.OKAsync(CurrentUser);
+            // return await Result.OKAsync(userInfoService.GetUsers(p => true));
         }
 
-
+        [AllowAnonymous]
         [Route("test")]
         public async Task<Result> Test()
         {
@@ -38,7 +39,7 @@ namespace LIU.Tangtu.Web.Controllers
         }
 
         [Route("test2")]
-        [Authorize]
+
         public async Task<Result> Test2()
         {
             return await Result.OKAsync(2222);
