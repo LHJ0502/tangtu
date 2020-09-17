@@ -32,10 +32,10 @@ namespace LIU.Tangtu.Web.Controllers
         }
 
         [AllowAnonymous]
-        [Route("test")]
-        public async Task<Result> Test()
+        [Route("Index")]
+        public IActionResult Index()
         {
-            return await Result.OKAsync(1111);
+            return Ok("服务启动成功！！！");
         }
 
         [Route("test2")]

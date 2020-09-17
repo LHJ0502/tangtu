@@ -27,11 +27,11 @@ namespace LIU.Tangtu.Web.Controllers
                     new Claim("name",userName)
 
                 };
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDI2a2EJ7m872v0afyoSDJT2o1+SitIeJSWtLJU8/Wz2m7gStexajkeD+Lka6DSTy8gt9UwfgVQo6uKjVLG5Ex7PiGOODVqAEghBuS7JzIYU5RvI543nNDAPfnJsas96mSA7L/mD7RTE2drj6hf3oZjJpMPZUQI/B1Qjb5H3K3PNwIDAQAB"));
+                var key = new SymmetricSecurityKey(JWTConstData.SecurityKey);
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var token = new JwtSecurityToken(
-                     issuer: "http://localhost:26798",
-                     audience: "http://localhost:26798",
+                     issuer: JWTConstData.issuer,
+                     audience: JWTConstData.audience,
                     claims: claims,
                     expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: creds);

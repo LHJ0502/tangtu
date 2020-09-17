@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using LIU.Framework.Core;
+using LIU.Tangtu.Web.App_Code;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,14 +35,14 @@ namespace LIU.Tangtu.Web
             {
                 p.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,//是否验证Issuer
-                    ValidateAudience = true,//是否验证Audience
+                    //ValidateIssuer = true,//是否验证Issuer
+                    //ValidateAudience = true,//是否验证Audience
                     ValidateLifetime = true,//是否验证失效时间
-                    ClockSkew = TimeSpan.FromSeconds(30),
+                    //ClockSkew = TimeSpan.FromSeconds(30),
                     ValidateIssuerSigningKey = true,//是否验证SecurityKey
-                    ValidAudience = "http://localhost:26798",//Audience
-                    ValidIssuer = "http://localhost:26798",//Issuer，这两项和前面签发jwt的设置一致
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDI2a2EJ7m872v0afyoSDJT2o1+SitIeJSWtLJU8/Wz2m7gStexajkeD+Lka6DSTy8gt9UwfgVQo6uKjVLG5Ex7PiGOODVqAEghBuS7JzIYU5RvI543nNDAPfnJsas96mSA7L/mD7RTE2drj6hf3oZjJpMPZUQI/B1Qjb5H3K3PNwIDAQAB"))//拿到SecurityKey
+                    ValidAudience = JWTConstData.audience,//Audience
+                    ValidIssuer = JWTConstData.issuer,//Issuer，这两项和前面签发jwt的设置一致
+                    IssuerSigningKey = new SymmetricSecurityKey(JWTConstData.SecurityKey)//拿到SecurityKey
                 };
             });
             //services.AddControllersWithViews();
@@ -50,7 +51,7 @@ namespace LIU.Tangtu.Web
                 p.JsonSerializerOptions.Converters.Add(new DatetimeJsonConverter());
             });
 
-           
+
 
         }
         public void ConfigureContainer(ContainerBuilder builder)
@@ -84,7 +85,7 @@ namespace LIU.Tangtu.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "Api/{controller=Home}/{action=Index}/{id?}");
             });
 
 
