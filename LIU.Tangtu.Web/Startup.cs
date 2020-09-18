@@ -76,6 +76,12 @@ namespace LIU.Tangtu.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+
+            // π”√ƒ¨»œ“≥
+            DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
+            defaultFilesOptions.DefaultFileNames.Clear();
+            defaultFilesOptions.DefaultFileNames.Add("Main.html");
+            app.UseDefaultFiles(defaultFilesOptions);
             app.UseStaticFiles();
             app.UseRouting();
 
@@ -85,7 +91,7 @@ namespace LIU.Tangtu.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "Api/{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
 

@@ -24,7 +24,7 @@ namespace LIU.Framework.Core.Data
         //}
         //private static MethodInfo applyConcreteMethod;
 
-        public DbContextBase()
+        static DbContextBase()
         {
             //if (applyConcreteMethod == null)
             //{
@@ -33,18 +33,20 @@ namespace LIU.Framework.Core.Data
 
             //    applyConcreteMethod = typeof(ModelBuilder).GetMethods().Single(p => p.Name == "ApplyConfiguration" && p.GetParameters().SingleOrDefault().ParameterType.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>));
             //}
-            if (ConnectionString.IsNullOrWhiteSpace())
+            if (connectionString.IsNullOrWhiteSpace())
             {
                 FileInfo fileInfo = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Config\conn.json"));
                 using (var s = fileInfo.OpenText())
                 {
                     var json = JsonConvert.DeserializeObject<dynamic>(s.ReadToEnd());
-                    ConnectionString = CryptoHelper.AesDecrypt((string)(json.DB));
+                    connectionString = CryptoHelper.AesDecrypt((string)(json.DB));
                 }
             }
         }
 
-        public string ConnectionString { get; }
+        private static string connectionString { get; set; }
+
+        public string ConnectionString { get { return connectionString; } }
 
         public DbConnection dbConnection { get; }
 

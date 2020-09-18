@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Tangtu.IServices", "LIU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Tangtu.Domian", "LIU.Tangtu.Domian\LIU.Tangtu.Domian.csproj", "{F9827EF6-F62C-45EB-A1A5-309CF1C64916}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIU.Tangtu.EntityConfig", "LIU.Tangtu.EntityConfig\LIU.Tangtu.EntityConfig.csproj", "{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIU.Tangtu.EntityConfig", "LIU.Tangtu.EntityConfig\LIU.Tangtu.EntityConfig.csproj", "{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIU.Framework.WebApi", "LIU.Framework\LIU.Framework.WebApi\LIU.Framework.WebApi.csproj", "{6BE8EDE2-A97B-4466-9E29-50B67DEC7C19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,10 @@ Global
 		{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2BC0AD3-7F93-414A-BA9A-6EB2D85714DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BE8EDE2-A97B-4466-9E29-50B67DEC7C19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BE8EDE2-A97B-4466-9E29-50B67DEC7C19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BE8EDE2-A97B-4466-9E29-50B67DEC7C19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BE8EDE2-A97B-4466-9E29-50B67DEC7C19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7C58FAF1-2DCE-4AB2-BC65-9F5CCD8BD53F} = {600538FA-A8EA-4339-868A-C4857F68709B}
 		{FCAD4E74-0A4D-4B36-84B7-199D92227CE5} = {600538FA-A8EA-4339-868A-C4857F68709B}
+		{6BE8EDE2-A97B-4466-9E29-50B67DEC7C19} = {600538FA-A8EA-4339-868A-C4857F68709B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {000899E4-ED63-4335-A69F-9105D3FEF089}
