@@ -27,11 +27,11 @@ namespace LIU.Tangtu.Web.Controllers
                     new Claim("name",userName)
 
                 };
-                var key = new SymmetricSecurityKey(JWTConstData.SecurityKey);
+                var key = new SymmetricSecurityKey(JWTData.SecurityKey);
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var token = new JwtSecurityToken(
-                     issuer: JWTConstData.issuer,
-                     audience: JWTConstData.audience,
+                     issuer: JWTData.Issuer,
+                     audience: JWTData.Audience,
                     claims: claims,
                     expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: creds);

@@ -31,15 +31,10 @@ namespace LIU.Tangtu.Web.Controllers
             // return await Result.OKAsync(userInfoService.GetUsers(p => true));
         }
 
-        [AllowAnonymous]
-        [Route("Index")]
-        public IActionResult Index()
-        {
-            return Ok("服务启动成功！！！");
-        }
+     
 
         [Route("test2")]
-
+        [AllowAnonymous]
         public async Task<Result> Test2()
         {
             return await Result.OKAsync(2222);

@@ -40,9 +40,9 @@ namespace LIU.Tangtu.Web
                     ValidateLifetime = true,//是否验证失效时间
                     //ClockSkew = TimeSpan.FromSeconds(30),
                     ValidateIssuerSigningKey = true,//是否验证SecurityKey
-                    ValidAudience = JWTConstData.audience,//Audience
-                    ValidIssuer = JWTConstData.issuer,//Issuer，这两项和前面签发jwt的设置一致
-                    IssuerSigningKey = new SymmetricSecurityKey(JWTConstData.SecurityKey)//拿到SecurityKey
+                    ValidAudience = JWTData.Audience,//Audience
+                    ValidIssuer = JWTData.Issuer,//Issuer，这两项和前面签发jwt的设置一致
+                    IssuerSigningKey = new SymmetricSecurityKey(JWTData.SecurityKey)//拿到SecurityKey
                 };
             });
             //services.AddControllersWithViews();
@@ -50,9 +50,6 @@ namespace LIU.Tangtu.Web
             {
                 p.JsonSerializerOptions.Converters.Add(new DatetimeJsonConverter());
             });
-
-
-
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {
@@ -63,7 +60,6 @@ namespace LIU.Tangtu.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            ///添加jwt验证
             app.UseAuthentication();
             if (env.IsDevelopment())
             {
@@ -75,7 +71,7 @@ namespace LIU.Tangtu.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             //使用默认页
             DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
@@ -91,7 +87,7 @@ namespace LIU.Tangtu.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Default}/{action=Index}/{id?}");
             });
 
 
