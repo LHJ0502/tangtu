@@ -46,7 +46,7 @@ namespace LIU.Tangtu.Web.App_Code
         {
             get
             {
-                return Encoding.UTF8.GetBytes(key);
+                return Encoding.UTF8.GetBytes(Configuration["JWTSetting:SecurityKey"] ?? key);
             }
         }
 

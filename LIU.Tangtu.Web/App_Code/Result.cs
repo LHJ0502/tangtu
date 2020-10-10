@@ -33,7 +33,7 @@ namespace LIU.Tangtu.Web.App_Code
         /// <param name="message"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static Result Fail(int code = -1, string message = null, object data = null)
+        public static Result Fail(string message = null, int code = -1, object data = null)
         {
             return new Result() { Code = code, Data = data, Message = message };
         }
@@ -60,11 +60,11 @@ namespace LIU.Tangtu.Web.App_Code
         /// <param name="message"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static async Task<Result> FailAsync(int code = -1, string message = null, object data = null)
+        public static async Task<Result> FailAsync(string message = null, int code = -1, object data = null)
         {
             return await Task<Result>.Run(() =>
             {
-                return Fail(code, message, data);
+                return Fail(message, code, data);
             });
         }
 

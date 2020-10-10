@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using LIU.Framework.Core.Base;
 using LIU.Framework.Core.Bus;
+using LIU.Framework.Core.Cache;
 using LIU.Framework.Core.Data;
 using LIU.Framework.Core.Inject;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -98,25 +99,40 @@ namespace LIU.Framework.Core
         public virtual AppInstance AppBuilder(ContainerBuilder builder, bool isBuild = false)
         {
             _builder = builder ?? _builder ?? new ContainerBuilder();
-            //注入
+            //注入数据库上下文
             _builder.RegisterType<DbContextBase>().As<IDbContext>().InstancePerLifetimeScope();//目前单数据库，后期可以考虑使用工厂代替
 
+            //注册仓储
             _builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
 
+            //注册契约服务
             //var types = Finder.FindTypes(p => p.IsAssignableFrom(typeof(IContractService)) && p != typeof(IContractService) && p.IsClass && !p.IsAbstract).ToArray();
             var types = Finder.FindTypes(p => p.GetInterfaces().Contains(typeof(IContractService)) && p != typeof(IContractService) && p.IsClass && !p.IsAbstract).ToArray();
-
             if (types.Any())
             {
                 _builder.RegisterTypes(types)?.AsImplementedInterfaces().InstancePerLifetimeScope();
             }
 
+            //注册数据映射
             types = Finder.FindTypes(p => p.GetInterfaces().Contains(typeof(IEntityMap)) && p != typeof(IEntityMap) && p.IsClass && !p.IsAbstract).ToArray();
             if (types.Any())
             {
                 _builder.RegisterTypes(types)?.AsImplementedInterfaces().SingleInstance();
             }
 
+            //注入缓存
+            types = Finder.FindTypes(p => p.GetInterfaces().Contains(typeof(ICache)) && p != typeof(ICache) && p.IsClass && !p.IsAbstract).ToArray();
+            if (types.Any())
+            {
+                //有其他的实现就不注册默认实现
+                var type = types.Where(p => !p.GetInterfaces().Contains(typeof(IDefaultImplementation))).ToArray();
+                if (type.Any())
+                    _builder.RegisterTypes(type)?.AsImplementedInterfaces().SingleInstance();
+                else
+                    _builder.RegisterTypes(types)?.AsImplementedInterfaces().SingleInstance();
+            }
+
+            //注册总线
             _builder.RegisterType<RepositoryBus>().As<IRepositoryBus>().InstancePerLifetimeScope();
             _builder.RegisterType<ServiceBus>().As<IServiceBus>().InstancePerLifetimeScope();
 

@@ -7,8 +7,13 @@ using System.Text;
 
 namespace LIU.Tangtu.IServices.Sys
 {
-    public interface IUserInfoService : IBaseService
+    public interface IUserInfoService : IBaseService<UserInfo>
     {
+        /// <summary>
+        /// 获取用户
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         List<UserInfo> GetUsers(Expression<Func<UserInfo, bool>> expression);
     }
 }

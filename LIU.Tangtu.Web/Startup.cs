@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -7,16 +8,19 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using LIU.Framework.Common.Extend;
 using LIU.Framework.Core;
 using LIU.Tangtu.Web.App_Code;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace LIU.Tangtu.Web
 {
@@ -44,11 +48,61 @@ namespace LIU.Tangtu.Web
                     ValidIssuer = JWTData.Issuer,//Issuer，这两项和前面签发jwt的设置一致
                     IssuerSigningKey = new SymmetricSecurityKey(JWTData.SecurityKey)//拿到SecurityKey
                 };
+                p.Events = new JwtBearerEvents
+                {
+                    //此处为权限验证失败后触发的事件  未授权时调用。
+                    OnChallenge = context =>
+                    {
+                        //此处代码为终止.Net Core默认的返回类型和数据结果，这个很重要哦，必须
+                        context.HandleResponse();
+                        string payload = "";
+                        if (context.AuthenticateFailure.Message.IsNotNullOrWhiteSpace())
+                            payload = context.AuthenticateFailure.Message;
+                        else
+                            //自定义自己想要返回的数据结果，我这里要返回的是Json对象，通过引用Newtonsoft.Json库进行转换
+                            payload = JsonConvert.SerializeObject(Result.Fail("很抱歉，您无权访问该接口", 401));
+                        //自定义返回的数据类型
+                        context.Response.ContentType = "application/json";
+                        //自定义返回状态码，默认为401 我这里改成 200
+                        context.Response.StatusCode = StatusCodes.Status200OK;
+                        //context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        //输出Json数据结果
+                        context.Response.WriteAsync(payload);
+                        return Task.FromResult(0);
+                    },
+                    OnAuthenticationFailed = p =>
+                    {
+                        var payload = JsonConvert.SerializeObject(Result.Fail("验证失败", 401));
+                        //自定义返回的数据类型
+                        p.Response.ContentType = "application/json";
+                        //自定义返回状态码，默认为401 我这里改成 200
+                        p.Response.StatusCode = StatusCodes.Status200OK;
+                        p.Response.WriteAsync(payload);
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = p =>
+                    {
+                        //string roleKey = (p.SecurityToken as JwtSecurityToken).Claims.First(p => p.Type == "sRoleKey").Value;
+                        string roleKey = p.Principal.Claims.First(p => p.Type == "sRoleKey").Value;
+
+                        if (roleKey != "rre")
+                        {
+                            var payload = JsonConvert.SerializeObject(Result.Fail("您无权访问该接口" + roleKey, 401));
+                            p.Fail(payload);
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
             //services.AddControllersWithViews();
-            services.AddMvc().AddJsonOptions(p =>
+            services.AddMvc(p =>
             {
-                p.JsonSerializerOptions.Converters.Add(new DatetimeJsonConverter());
+                p.Filters.Add<GlobalExceptionFilter>();//注册全局过滤器
+            }).AddJsonOptions(p =>
+            {
+                p.JsonSerializerOptions.Converters.Add(new DatetimeJsonConverter());//注册json时间格式
+
             });
         }
         public void ConfigureContainer(ContainerBuilder builder)

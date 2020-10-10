@@ -5,13 +5,8 @@ using System.Text;
 
 namespace LIU.Tangtu.Domian.Sys
 {
-    public class UserInfo: IEntity
+    public class UserInfo : BaseEntity
     {
-        /// <summary>
-        /// 主键
-        /// </summary>
-        public Guid gkey { get; set; }
-
         /// <summary>
         /// 登录名
         /// </summary>
@@ -30,7 +25,7 @@ namespace LIU.Tangtu.Domian.Sys
         /// <summary>
         /// 用户前后台转态 1前台用户 无法登陆后台系统 2后台用户 前后台都可以使用
         /// </summary>
-        public int iState { get; set; }
+        public byte iState { get; set; }
 
         /// <summary>
         /// 头像地址
@@ -42,7 +37,6 @@ namespace LIU.Tangtu.Domian.Sys
         /// </summary>
         public string sHerdImageUrl { get; set; }
 
-
         /// <summary>
         /// 邮箱地址
         /// </summary>
@@ -51,7 +45,7 @@ namespace LIU.Tangtu.Domian.Sys
         /// <summary>
         /// 邮箱验证结果 0未验证通过 1验证通过
         /// </summary>
-        public int iEmailValidate { get; set; }
+        public bool iEmailValidate { get; set; }
 
         /// <summary>
         /// 金币
@@ -61,7 +55,7 @@ namespace LIU.Tangtu.Domian.Sys
         /// <summary>
         /// Vip级别
         /// </summary>
-        public int iLevel { get; set; }
+        public int iLevel { get; set; } = 0;
 
         /// <summary>
         /// vip到期时间
@@ -73,16 +67,15 @@ namespace LIU.Tangtu.Domian.Sys
         /// </summary>
         public string sRoleKey { get; set; }
 
-
         /// <summary>
         /// 性别 1:男 2:女 9:未知
         /// </summary>
-        public int? iSex { get; set; }
+        public byte iSex { get; set; } = 9;
 
         /// <summary>
         /// 启用状态 1:启用 2:停用
         /// </summary>
-        public int iFlag { get; set; }
+        public byte iFlag { get; set; } = 1;
 
         /// <summary>
         /// 最后一次登录时间

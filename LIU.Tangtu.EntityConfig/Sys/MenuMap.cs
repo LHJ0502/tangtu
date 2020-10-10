@@ -8,11 +8,11 @@ using System.Text;
 
 namespace LIU.Tangtu.EntityConfig.Sys
 {
-    public class UserInfoMap : EntityMap<UserInfo>
+    public class MenuMap : EntityMap<Menu>
     {
-        public override void Configure(EntityTypeBuilder<UserInfo> builder)
+        public override void Configure(EntityTypeBuilder<Menu> builder)
         {
-            builder.ToTable("sys_UserInfo");
+            builder.ToTable("sys_menu");
             builder.HasKey(p => p.gKey);
         }
     }

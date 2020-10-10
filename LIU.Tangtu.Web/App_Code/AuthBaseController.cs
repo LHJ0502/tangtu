@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using LIU.Tangtu.Domian.Sys;
 using LIU.Framework.Common.Extend;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
+using LIU.Tangtu.IServices.Sys;
 
 namespace LIU.Tangtu.Web.App_Code
 {
@@ -30,7 +32,8 @@ namespace LIU.Tangtu.Web.App_Code
                 var handler = new JwtSecurityTokenHandler();
                 var payload = handler.ReadJwtToken(tokenStr).Payload;
                 var claims = payload.Claims;
-                return new UserInfo() { sName = claims.First(p => p.Type == "name").Value };
+                var gkey = Convert.ToInt64(claims.First(p => p.Type == "gKey").Value);
+                return ServiceBus.Get<IUserInfoService>().GetOne(p => p.gKey == gkey);
             }
         }
 
