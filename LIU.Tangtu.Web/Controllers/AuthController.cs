@@ -25,8 +25,14 @@ namespace LIU.Tangtu.Web.Controllers
             userInfoService = ServiceBus.Get<IUserInfoService>();
         }
 
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="loginName"></param>
+        /// <param name="pwd"></param>
+        /// <returns></returns>
         [Route("Login")]
-        public async Task<Result> Get(string loginName, string pwd)
+        public async Task<Result> Login(string loginName, string pwd)
         {
 
             if (loginName.IsNotNullOrWhiteSpace() && pwd.IsNotNullOrWhiteSpace())
@@ -53,7 +59,7 @@ namespace LIU.Tangtu.Web.Controllers
                         expires: DateTime.Now.AddMinutes(30),
                         signingCredentials: creds);
                     var refreshToken = new JwtSecurityToken(
-                        issuer: JWTData.Issuer + JWTData.Issuer,
+                        issuer: JWTData.Issuer,
                         audience: JWTData.Audience,
                         claims: claims,
                         expires: DateTime.Now.AddDays(30),
@@ -76,6 +82,76 @@ namespace LIU.Tangtu.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 更新token值
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [Route("UpdateToken"), HttpPost]
+        public async Task<Result> UpdateToken(IDictionary<string, object> model)
+        {
+            if (model == null)
+            {
+                return await Result.FailAsync("参数错误");
+            }
+            var dic = new Dictionary<string, object>(model, StringComparer.OrdinalIgnoreCase);
+            string oldtoken = dic["token"].ToString();
+            string refreshToken = dic["refreshToken"].ToString();
+            //验证刷新的token是否正确
+            var param = new TokenValidationParameters
+            {
+                //ValidateIssuer = true,//是否验证Issuer
+                //ValidateAudience = true,//是否验证Audience
+                ValidateLifetime = true,//是否验证失效时间
+                                        //ClockSkew = TimeSpan.FromSeconds(30),
+                ValidateIssuerSigningKey = true,//是否验证SecurityKey
+                ValidAudience = JWTData.Audience,//Audience
+                ValidIssuer = JWTData.Issuer,//Issuer，这两项和前面签发jwt的设置一致
+                IssuerSigningKey = new SymmetricSecurityKey(JWTData.SecurityKey)//拿到SecurityKey
+            };
+            SecurityToken securityToken = new JwtSecurityToken();
+            try
+            {
+                new JwtSecurityTokenHandler().ValidateToken(refreshToken, param, out securityToken);
+            }
+            catch (Exception ex)
+            {
+                return await Result.FailAsync("刷新Token验证失败", ResultStatus.ValidateAuthorityFail);
+            }
+            //解析旧的token，直接在旧的token上改过期时间
+            param = new TokenValidationParameters  //不验证失效时间
+            {
+                //ValidateIssuer = true,//是否验证Issuer
+                //ValidateAudience = true,//是否验证Audience
+                //ValidateLifetime = true,//是否验证失效时间   
+                //ClockSkew = TimeSpan.FromSeconds(30),
+                ValidateIssuerSigningKey = true,//是否验证SecurityKey
+                ValidAudience = JWTData.Audience,//Audience
+                ValidIssuer = JWTData.Issuer,//Issuer，这两项和前面签发jwt的设置一致
+                IssuerSigningKey = new SymmetricSecurityKey(JWTData.SecurityKey)//拿到SecurityKey
+            };
+            try
+            {
+                new JwtSecurityTokenHandler().ValidateToken(oldtoken, param, out securityToken);
+            }
+            catch (Exception ex)
+            {
+                return await Result.FailAsync("Token验证失败", ResultStatus.ValidateAuthorityFail);
+            }
+            var jwttoken = ((JwtSecurityToken)securityToken);
+            var key = new SymmetricSecurityKey(JWTData.SecurityKey);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var accessToken = new JwtSecurityToken(
+                      issuer: JWTData.Issuer,
+                      audience: JWTData.Audience,
+                      claims: jwttoken.Claims,
+                      expires: DateTime.Now.AddMinutes(30),
+                      signingCredentials: creds);
+            return await Result.OKAsync(new
+            {
+                accessToken = new JwtSecurityTokenHandler().WriteToken(accessToken)
+            });
+        }
 
     }
 }

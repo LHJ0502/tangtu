@@ -15,7 +15,7 @@ namespace LIU.Tangtu.Web.App_Code
         public void OnException(ExceptionContext context)
         {
             context.ExceptionHandled = true;
-            context.Result = new JsonResult(Result.Fail("系统内部错误", -500, context.Exception.Message + "     " + context.Exception.StackTrace));
+            context.Result = new JsonResult(Result.Fail("系统内部错误",  ResultStatus.SysError, context.Exception.Message + "     " + context.Exception.StackTrace));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace LIU.Tangtu.Web.App_Code
     public class Result
     {
 
-        public int Code { get; set; }
+        public ResultStatus Code { get; set; }
         public object Data { get; set; }
         public string Message { get; set; }
 
@@ -23,7 +23,7 @@ namespace LIU.Tangtu.Web.App_Code
         /// <returns></returns>
         public static Result OK(object data = null, string message = null)
         {
-            return new Result() { Code = 0, Data = data, Message = message };
+            return new Result() { Code = ResultStatus.OK, Data = data, Message = message };
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace LIU.Tangtu.Web.App_Code
         /// <param name="message"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static Result Fail(string message = null, int code = -1, object data = null)
+        public static Result Fail(string message = null, ResultStatus code = ResultStatus.Fail, object data = null)
         {
             return new Result() { Code = code, Data = data, Message = message };
         }
@@ -60,7 +60,7 @@ namespace LIU.Tangtu.Web.App_Code
         /// <param name="message"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static async Task<Result> FailAsync(string message = null, int code = -1, object data = null)
+        public static async Task<Result> FailAsync(string message = null, ResultStatus code = ResultStatus.Fail, object data = null)
         {
             return await Task<Result>.Run(() =>
             {
@@ -68,5 +68,29 @@ namespace LIU.Tangtu.Web.App_Code
             });
         }
 
+    }
+
+    /// <summary>
+    /// 返回状态结果
+    /// </summary>
+    public enum ResultStatus
+    {
+        /// <summary>
+        /// 成功
+        /// </summary>
+        OK = 0,
+        /// <summary>
+        /// 失败
+        /// </summary>
+        Fail = -1,
+        /// <summary>
+        /// 系统内部错误
+        /// </summary>
+        SysError = 500,
+
+        /// <summary>
+        /// 验证权限失败
+        /// </summary>
+        ValidateAuthorityFail = 401
     }
 }

@@ -60,7 +60,7 @@ namespace LIU.Tangtu.Web
                             payload = context.AuthenticateFailure.Message;
                         else
                             //自定义自己想要返回的数据结果，我这里要返回的是Json对象，通过引用Newtonsoft.Json库进行转换
-                            payload = JsonConvert.SerializeObject(Result.Fail("很抱歉，您无权访问该接口", 401));
+                            payload = JsonConvert.SerializeObject(Result.Fail("很抱歉，您无权访问该接口", ResultStatus.ValidateAuthorityFail));
                         //自定义返回的数据类型
                         context.Response.ContentType = "application/json";
                         //自定义返回状态码，默认为401 我这里改成 200
@@ -72,7 +72,7 @@ namespace LIU.Tangtu.Web
                     },
                     OnAuthenticationFailed = p =>
                     {
-                        var payload = JsonConvert.SerializeObject(Result.Fail("验证失败", 401));
+                        var payload = JsonConvert.SerializeObject(Result.Fail("验证失败", ResultStatus.ValidateAuthorityFail));
                         //自定义返回的数据类型
                         p.Response.ContentType = "application/json";
                         //自定义返回状态码，默认为401 我这里改成 200
@@ -87,7 +87,7 @@ namespace LIU.Tangtu.Web
 
                         if (roleKey != "rre")
                         {
-                            var payload = JsonConvert.SerializeObject(Result.Fail("您无权访问该接口" + roleKey, 401));
+                            var payload = JsonConvert.SerializeObject(Result.Fail("您无权访问该接口" + roleKey, ResultStatus.ValidateAuthorityFail));
                             p.Fail(payload);
                         }
 

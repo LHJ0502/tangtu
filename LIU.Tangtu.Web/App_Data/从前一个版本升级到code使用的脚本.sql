@@ -101,6 +101,7 @@ BEGIN
 END
 ALTER TABLE dbo.sys_userInfo ALTER COLUMN iState TINYINT NOT NULL
 
+ALTER TABLE dbo.sys_userInfo ALTER COLUMN iFlag TINYINT NOT NULL
 ALTER TABLE dbo.sys_userInfo ALTER COLUMN iEmailValidate BIT
 ALTER TABLE dbo.sys_userInfo ALTER COLUMN iSex TINYINT
 
@@ -116,6 +117,7 @@ EXEC sp_rename 'sys_menu.dUpdate','dUpdateTime'
 ALTER TABLE dbo.sys_menu ALTER COLUMN iType TINYINT
 ALTER TABLE dbo.sys_menu  DROP PK_sys_menu
 ALTER TABLE dbo.sys_menu ALTER COLUMN gKey VARCHAR(36) NOT NULL 
+ALTER TABLE dbo.sys_menu ALTER COLUMN gParentKey VARCHAR(36) NOT NULL 
 ALTER TABLE dbo.sys_role_menu DROP PK_sys_role_menu
 ALTER TABLE dbo.[sys_role_menu] ALTER COLUMN gRoleKey VARCHAR(36) NOT NULL
 ALTER TABLE dbo.[sys_role_menu] ALTER COLUMN gMenukey VARCHAR(36) NOT NULL
@@ -131,6 +133,8 @@ FETCH NEXT from sss INTO @id /* 读取第1行数据*/
 　　WHILE @@FETCH_STATUS = 0 /* 用WHILE循环控制游标活动 */
 　　BEGIN
 　　	UPDATE [dbo].[sys_role_menu] SET gMenuKey=@iii WHERE gMenuKey=@id
+	UPDATE dbo.sys_menu SET gKey=@iii WHERE gKey=@id
+	UPDATE dbo.sys_menu SET gParentKey=@iii WHERE gParentKey=@id
 	SET @iii=@iii+1
 	 FETCH NEXT FROM sss INTO @id
 	 PRINT(@iii)
@@ -138,4 +142,12 @@ FETCH NEXT from sss INTO @id /* 读取第1行数据*/
 　　CLOSE sss /* 关闭游标 */
 DEALLOCATE sss /* 删除游标 */
 
+UPDATE dbo.sys_menu SET gParentKey ='1000000' WHERE gParentKey='00000000-0000-0000-0000-000000000000'
+
+ALTER TABLE dbo.sys_menu ALTER COLUMN gKey BIGINT NOT NULL 
+ALTER TABLE dbo.sys_menu ALTER COLUMN gParentKey BIGINT NOT NULL 
+
+
 GO
+
+--角色
