@@ -58,6 +58,7 @@ namespace LIU.Framework.Core.Inject
 
         private void LoadAssembly(string searchPattern, List<Assembly> list)
         {
+            var asss = AppDomain.CurrentDomain.GetAssemblies();//很重要
             var dlls = Directory.GetFiles(path, searchPattern, SearchOption.TopDirectoryOnly).ToList();
             foreach (var dll in dlls)
             {
@@ -66,7 +67,16 @@ namespace LIU.Framework.Core.Inject
                 {
                     try
                     {
-                        list.Add(Assembly.LoadFile(dll));
+                        var thisAss = Assembly.LoadFile(dll) ;
+                        var ass = asss.FirstOrDefault(x => x.FullName == thisAss.FullName);
+                        if (ass != null)//有已加载的使用已加载
+                        {
+                            list.Add(ass);
+                        }
+                        else
+                        {
+                            list.Add(Assembly.LoadFile(dll));
+                        }
                     }
                     catch (Exception)
                     {

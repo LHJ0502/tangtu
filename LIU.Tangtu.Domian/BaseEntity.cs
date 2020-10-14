@@ -24,7 +24,7 @@ namespace LIU.Tangtu.Domian
         /// <summary>
         /// 创建人主键
         /// </summary>
-        public long gCreateKey { get; set; }
+        public long? gCreateKey { get; set; }
 
         /// <summary>
         /// 创建人名称
@@ -34,7 +34,7 @@ namespace LIU.Tangtu.Domian
         /// <summary>
         /// 创建时间
         /// </summary>
-        public DateTime dCreateTime { get; set; }
+        public DateTime? dCreateTime { get; set; }
     }
 
     /// <summary>

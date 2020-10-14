@@ -118,18 +118,8 @@ namespace LIU.Tangtu.Web.Controllers
             {
                 return await Result.FailAsync("刷新Token验证失败", ResultStatus.ValidateAuthorityFail);
             }
-            //解析旧的token，直接在旧的token上改过期时间
-            param = new TokenValidationParameters  //不验证失效时间
-            {
-                //ValidateIssuer = true,//是否验证Issuer
-                //ValidateAudience = true,//是否验证Audience
-                //ValidateLifetime = true,//是否验证失效时间   
-                //ClockSkew = TimeSpan.FromSeconds(30),
-                ValidateIssuerSigningKey = true,//是否验证SecurityKey
-                ValidAudience = JWTData.Audience,//Audience
-                ValidIssuer = JWTData.Issuer,//Issuer，这两项和前面签发jwt的设置一致
-                IssuerSigningKey = new SymmetricSecurityKey(JWTData.SecurityKey)//拿到SecurityKey
-            };
+            //解析旧的token，直接在旧的token上改过期时间          
+            param.ValidateLifetime = false;
             try
             {
                 new JwtSecurityTokenHandler().ValidateToken(oldtoken, param, out securityToken);

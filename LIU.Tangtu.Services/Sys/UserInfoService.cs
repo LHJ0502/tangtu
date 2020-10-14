@@ -11,12 +11,13 @@ namespace LIU.Tangtu.Services.Sys
 {
     public class UserInfoService : BaseService<UserInfo>, IUserInfoService
     {
-        public UserInfoService()
-        { }
-
+        /// <inheritdoc/>
         public List<UserInfo> GetUsers(Expression<Func<UserInfo, bool>> expression)
         {
             return repository.Find().Where(expression).ToList();
         }
+
+
+
     }
 }

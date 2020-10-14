@@ -10,6 +10,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using LIU.Framework.Common.Extend;
 using LIU.Framework.Core;
+using LIU.Tangtu.IServices.Sys;
 using LIU.Tangtu.Web.App_Code;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -80,15 +81,17 @@ namespace LIU.Tangtu.Web
                         p.Response.WriteAsync(payload);
                         return Task.CompletedTask;
                     },
-                    OnTokenValidated = p =>
+                    OnTokenValidated = context =>
                     {
                         //string roleKey = (p.SecurityToken as JwtSecurityToken).Claims.First(p => p.Type == "sRoleKey").Value;
-                        string roleKey = p.Principal.Claims.First(p => p.Type == "sRoleKey").Value;
+                        var roleKey = context.Principal.Claims.First(p => p.Type == "sRoleKey").Value.Split(',').ToList();
+                        var rolekeys= roleKey.ConvertAll(p => Convert.ToInt64(p));
+                        var roleMenuService = AppInstance.Current.Resolve<IRoleMenuService>();
 
-                        if (roleKey != "rre")
+                        if (!roleMenuService.CheckRole(rolekeys, context.HttpContext.Request.Path))
                         {
                             var payload = JsonConvert.SerializeObject(Result.Fail("您无权访问该接口" + roleKey, ResultStatus.ValidateAuthorityFail));
-                            p.Fail(payload);
+                            context.Fail(payload);
                         }
 
                         return Task.CompletedTask;

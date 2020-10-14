@@ -10,7 +10,7 @@ namespace LIU.Framework.Core.Cache
     /// <summary>
     /// 系统默认缓存
     /// </summary>
-    public class SystemCache : ICache, IDefaultImplementation
+    public class SystemCache : ICache
     {
         /// <summary>
         /// 系统默认缓存

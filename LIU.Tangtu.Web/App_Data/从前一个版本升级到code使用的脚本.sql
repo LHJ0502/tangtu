@@ -113,7 +113,8 @@ EXEC sp_rename 'sys_menu.gInsertKey','gCreateKey'
 EXEC sp_rename 'sys_menu.dInsert','dCreateTime'
 EXEC sp_rename 'sys_menu.gUpdateKey','gUpdateKey'
 EXEC sp_rename 'sys_menu.dUpdate','dUpdateTime'
-
+ALTER TABLE dbo.sys_menu ADD sCreateName VARCHAR(64)
+ALTER TABLE dbo.sys_menu ADD sUpdateName VARCHAR(64)
 ALTER TABLE dbo.sys_menu ALTER COLUMN iType TINYINT
 ALTER TABLE dbo.sys_menu  DROP PK_sys_menu
 ALTER TABLE dbo.sys_menu ALTER COLUMN gKey VARCHAR(36) NOT NULL 
@@ -148,6 +149,90 @@ ALTER TABLE dbo.sys_menu ALTER COLUMN gKey BIGINT NOT NULL
 ALTER TABLE dbo.sys_menu ALTER COLUMN gParentKey BIGINT NOT NULL 
 
 
+ALTER TABLE dbo.sys_menu ADD PRIMARY KEY(gkey)
 GO
 
 --角色
+
+ALTER TABLE dbo.sys_role  DROP PK_sys_role
+ALTER TABLE dbo.sys_role ALTER COLUMN gKey VARCHAR(36) NOT NULL 
+GO
+DECLARE @iii BIGINT,@id VARCHAR(36)
+SET @iii=1000001
+DECLARE sss CURSOR
+FOR SELECT gkey FROM dbo.sys_role
+OPEN sss
+FETCH NEXT from sss INTO @id /* 读取第1行数据*/
+　　WHILE @@FETCH_STATUS = 0 /* 用WHILE循环控制游标活动 */
+　　BEGIN
+　　	UPDATE [dbo].[sys_role_menu] SET gRoleKey=@iii WHERE gRoleKey=@id
+	UPDATE dbo.sys_userInfo SET sRoleKey=@iii WHERE sRoleKey LIKE '%'+@id+'%'
+	UPDATE dbo.sys_role SET gKey=@iii WHERE gKey=@id
+	SET @iii=@iii+1
+	 FETCH NEXT FROM sss INTO @id
+	 PRINT(@iii)
+　　END
+　　CLOSE sss /* 关闭游标 */
+DEALLOCATE sss /* 删除游标 */
+
+
+ALTER TABLE dbo.sys_role ALTER COLUMN gKey BIGINT NOT NULL 
+ALTER TABLE dbo.sys_role ADD PRIMARY KEY(gkey)
+EXEC sp_rename 'sys_role.gInsertKey','gCreateKey'
+EXEC sp_rename 'sys_role.dInsert','dCreateTime'
+EXEC sp_rename 'sys_role.gUpdateKey','gUpdateKey'
+EXEC sp_rename 'sys_role.dUpdate','dUpdateTime'
+
+ALTER TABLE dbo.sys_role ADD sCreateName VARCHAR(64)
+ALTER TABLE dbo.sys_role ADD sUpdateName VARCHAR(64)
+
+
+EXEC sp_rename 'sys_role_menu.gInsertKey','gCreateKey'
+EXEC sp_rename 'sys_role_menu.dInsert','dCreateTime'
+EXEC sp_rename 'sys_role_menu.gUpdateKey','gUpdateKey'
+EXEC sp_rename 'sys_role_menu.dUpdate','dUpdateTime'
+
+ALTER TABLE dbo.sys_role_menu ADD sCreateName VARCHAR(64)
+ALTER TABLE dbo.sys_role_menu ADD sUpdateName VARCHAR(64)
+ALTER TABLE dbo.sys_role_menu ADD gKey BIGINT 
+GO
+
+DECLARE @iii BIGINT,@gRoleKey VARCHAR(36),@gMenuKey VARCHAR(36)
+SET @iii=1000001
+DECLARE sss CURSOR
+FOR SELECT gRoleKey,gMenuKey FROM dbo.sys_role_menu
+OPEN sss
+FETCH NEXT from sss INTO @gRoleKey,@gMenuKey /* 读取第1行数据*/
+　　WHILE @@FETCH_STATUS = 0 /* 用WHILE循环控制游标活动 */
+　　BEGIN
+　　	UPDATE [dbo].[sys_role_menu] SET gKey=@iii WHERE gRoleKey=@gRoleKey AND gMenuKey=@gMenuKey
+	SET @iii=@iii+1
+	 FETCH NEXT FROM sss INTO @gRoleKey,@gMenuKey
+	 PRINT(@iii)
+　　END
+　　CLOSE sss /* 关闭游标 */
+DEALLOCATE sss /* 删除游标 */
+GO
+
+ALTER TABLE dbo.sys_role_menu ALTER COLUMN gKey BIGINT NOT NULL
+go
+ALTER TABLE dbo.sys_role_menu ADD PRIMARY KEY(gkey)
+GO
+
+ALTER TABLE dbo.sys_role_menu ALTER COLUMN gRoleKey BIGINT NOT NULL
+ALTER TABLE dbo.sys_role_menu ALTER COLUMN gMenuKey BIGINT NOT NULL
+ALTER TABLE dbo.sys_role_menu ALTER COLUMN gCreateKey BIGINT  NULL
+ALTER TABLE dbo.sys_role_menu ALTER COLUMN gUpdateKey BIGINT  NULL
+GO
+
+ALTER TABLE dbo.sys_menu ALTER COLUMN gCreateKey BIGINT  NULL
+ALTER TABLE dbo.sys_menu ALTER COLUMN gUpdateKey BIGINT  NULL
+GO
+
+
+
+
+SELECT * FROM dbo.sys_role 
+
+
+SELECT * FROM dbo.sys_userInfo
