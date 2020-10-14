@@ -61,7 +61,9 @@ namespace LIU.Tangtu.Web
                             payload = context.AuthenticateFailure.Message;
                         else
                             //自定义自己想要返回的数据结果，我这里要返回的是Json对象，通过引用Newtonsoft.Json库进行转换
-                            payload = JsonConvert.SerializeObject(Result.Fail("很抱歉，您无权访问该接口", ResultStatus.ValidateAuthorityFail));
+                            payload = JsonConvert.SerializeObject(Result.Fail("很抱歉，您无权访问该接口", ResultStatus.TokenFail));
+                        if(payload.Contains("Lifetime validation failed"))
+                            payload = JsonConvert.SerializeObject(Result.Fail("Token过期", ResultStatus.TokenTimeOut));
                         //自定义返回的数据类型
                         context.Response.ContentType = "application/json";
                         //自定义返回状态码，默认为401 我这里改成 200
@@ -71,26 +73,26 @@ namespace LIU.Tangtu.Web
                         context.Response.WriteAsync(payload);
                         return Task.FromResult(0);
                     },
-                    OnAuthenticationFailed = p =>
-                    {
-                        var payload = JsonConvert.SerializeObject(Result.Fail("验证失败", ResultStatus.ValidateAuthorityFail));
-                        //自定义返回的数据类型
-                        p.Response.ContentType = "application/json";
-                        //自定义返回状态码，默认为401 我这里改成 200
-                        p.Response.StatusCode = StatusCodes.Status200OK;
-                        p.Response.WriteAsync(payload);
-                        return Task.CompletedTask;
-                    },
+                    //OnAuthenticationFailed = p =>
+                    //{
+                    //    var payload = JsonConvert.SerializeObject(Result.Fail("验证失败", ResultStatus.TokenFail));
+                    //    //自定义返回的数据类型
+                    //    p.Response.ContentType = "application/json";
+                    //    //自定义返回状态码，默认为401 我这里改成 200
+                    //    p.Response.StatusCode = StatusCodes.Status200OK;
+                    //    p.Response.WriteAsync(payload);
+                    //    return Task.CompletedTask;
+                    //},
                     OnTokenValidated = context =>
                     {
                         //string roleKey = (p.SecurityToken as JwtSecurityToken).Claims.First(p => p.Type == "sRoleKey").Value;
                         var roleKey = context.Principal.Claims.First(p => p.Type == "sRoleKey").Value.Split(',').ToList();
-                        var rolekeys= roleKey.ConvertAll(p => Convert.ToInt64(p));
+                        var rolekeys = roleKey.ConvertAll(p => Convert.ToInt64(p));
                         var roleMenuService = AppInstance.Current.Resolve<IRoleMenuService>();
 
                         if (!roleMenuService.CheckRole(rolekeys, context.HttpContext.Request.Path))
                         {
-                            var payload = JsonConvert.SerializeObject(Result.Fail("您无权访问该接口" + roleKey, ResultStatus.ValidateAuthorityFail));
+                            var payload = JsonConvert.SerializeObject(Result.Fail("您无权访问该接口,请联系管理员", ResultStatus.ValidateAuthorityFail));
                             context.Fail(payload);
                         }
 

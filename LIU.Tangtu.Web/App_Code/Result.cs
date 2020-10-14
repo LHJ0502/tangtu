@@ -87,10 +87,22 @@ namespace LIU.Tangtu.Web.App_Code
         /// 系统内部错误
         /// </summary>
         SysError = 500,
-
         /// <summary>
         /// 验证权限失败
         /// </summary>
-        ValidateAuthorityFail = 401
+        ValidateAuthorityFail = 401,
+        /// <summary>
+        /// 验证Token失败
+        /// </summary>
+        TokenFail = 402,
+        /// <summary>
+        ///验证 刷新Token失败
+        /// </summary>
+        RefreshTokenFail = 403,
+
+        /// <summary>
+        /// Token过期
+        /// </summary>
+        TokenTimeOut=410,
     }
 }

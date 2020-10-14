@@ -59,8 +59,8 @@ namespace LIU.Tangtu.Web.Controllers
                         expires: DateTime.Now.AddMinutes(30),
                         signingCredentials: creds);
                     var refreshToken = new JwtSecurityToken(
-                        issuer: JWTData.Issuer,
-                        audience: JWTData.Audience,
+                        issuer: JWTData.Issuer + "$refresh",
+                        audience: JWTData.Audience + "$refresh",
                         claims: claims,
                         expires: DateTime.Now.AddDays(30),
                         signingCredentials: creds);
@@ -97,13 +97,13 @@ namespace LIU.Tangtu.Web.Controllers
             var dic = new Dictionary<string, object>(model, StringComparer.OrdinalIgnoreCase);
             string oldtoken = dic["token"].ToString();
             string refreshToken = dic["refreshToken"].ToString();
-            //验证刷新的token是否正确
+            //解析旧的token     
             var param = new TokenValidationParameters
             {
                 //ValidateIssuer = true,//是否验证Issuer
                 //ValidateAudience = true,//是否验证Audience
-                ValidateLifetime = true,//是否验证失效时间
-                                        //ClockSkew = TimeSpan.FromSeconds(30),
+                ValidateLifetime = false,//是否验证失效时间
+                                         //ClockSkew = TimeSpan.FromSeconds(30),
                 ValidateIssuerSigningKey = true,//是否验证SecurityKey
                 ValidAudience = JWTData.Audience,//Audience
                 ValidIssuer = JWTData.Issuer,//Issuer，这两项和前面签发jwt的设置一致
@@ -112,22 +112,26 @@ namespace LIU.Tangtu.Web.Controllers
             SecurityToken securityToken = new JwtSecurityToken();
             try
             {
-                new JwtSecurityTokenHandler().ValidateToken(refreshToken, param, out securityToken);
-            }
-            catch (Exception ex)
-            {
-                return await Result.FailAsync("刷新Token验证失败", ResultStatus.ValidateAuthorityFail);
-            }
-            //解析旧的token，直接在旧的token上改过期时间          
-            param.ValidateLifetime = false;
-            try
-            {
                 new JwtSecurityTokenHandler().ValidateToken(oldtoken, param, out securityToken);
             }
             catch (Exception ex)
             {
-                return await Result.FailAsync("Token验证失败", ResultStatus.ValidateAuthorityFail);
+                return await Result.FailAsync("Token验证失败", ResultStatus.TokenFail);
             }
+            //验证刷新的token是否正确
+
+            param.ValidateLifetime = true;
+            param.ValidAudience = JWTData.Audience + "$refresh";
+            param.ValidIssuer = JWTData.Issuer + "$refresh";
+            try
+            {
+                new JwtSecurityTokenHandler().ValidateToken(refreshToken, param, out securityToken);
+            }
+            catch (Exception ex)
+            {
+                return await Result.FailAsync("刷新Token验证失败", ResultStatus.RefreshTokenFail);
+            }
+
             var jwttoken = ((JwtSecurityToken)securityToken);
             var key = new SymmetricSecurityKey(JWTData.SecurityKey);
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
