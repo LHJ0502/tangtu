@@ -40,10 +40,10 @@ namespace LIU.Tangtu.Web
             {
                 p.TokenValidationParameters = new TokenValidationParameters
                 {
-                    //ValidateIssuer = true,//是否验证Issuer
-                    //ValidateAudience = true,//是否验证Audience
+                    ValidateIssuer = true,//是否验证Issuer
+                    ValidateAudience = true,//是否验证Audience
                     ValidateLifetime = true,//是否验证失效时间
-                    //ClockSkew = TimeSpan.FromSeconds(30),
+                    ClockSkew = TimeSpan.FromSeconds(30),
                     ValidateIssuerSigningKey = true,//是否验证SecurityKey
                     ValidAudience = JWTData.Audience,//Audience
                     ValidIssuer = JWTData.Issuer,//Issuer，这两项和前面签发jwt的设置一致
@@ -57,13 +57,12 @@ namespace LIU.Tangtu.Web
                         //此处代码为终止.Net Core默认的返回类型和数据结果，这个很重要哦，必须
                         context.HandleResponse();
                         string payload = "";
-                        if (context.AuthenticateFailure.Message.IsNotNullOrWhiteSpace())
-                            payload = context.AuthenticateFailure.Message;
+                        if (context.AuthenticateFailure.Message.IsNotNullOrWhiteSpace() && context.AuthenticateFailure.Message.Contains("Lifetime validation failed"))
+                            payload = JsonConvert.SerializeObject(Result.Fail("Token过期,请重新登录", ResultStatus.TokenTimeOut));
                         else
                             //自定义自己想要返回的数据结果，我这里要返回的是Json对象，通过引用Newtonsoft.Json库进行转换
-                            payload = JsonConvert.SerializeObject(Result.Fail("很抱歉，您无权访问该接口", ResultStatus.TokenFail));
-                        if(payload.Contains("Lifetime validation failed"))
-                            payload = JsonConvert.SerializeObject(Result.Fail("Token过期", ResultStatus.TokenTimeOut));
+                            payload = JsonConvert.SerializeObject(Result.Fail("Token验证失败，请重新登录", ResultStatus.TokenFail));
+
                         //自定义返回的数据类型
                         context.Response.ContentType = "application/json";
                         //自定义返回状态码，默认为401 我这里改成 200

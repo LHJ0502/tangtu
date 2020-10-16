@@ -100,10 +100,10 @@ namespace LIU.Tangtu.Web.Controllers
             //解析旧的token     
             var param = new TokenValidationParameters
             {
-                //ValidateIssuer = true,//是否验证Issuer
-                //ValidateAudience = true,//是否验证Audience
+                ValidateIssuer = true,//是否验证Issuer
+                ValidateAudience = true,//是否验证Audience
                 ValidateLifetime = false,//是否验证失效时间
-                                         //ClockSkew = TimeSpan.FromSeconds(30),
+                ClockSkew = TimeSpan.FromSeconds(30),
                 ValidateIssuerSigningKey = true,//是否验证SecurityKey
                 ValidAudience = JWTData.Audience,//Audience
                 ValidIssuer = JWTData.Issuer,//Issuer，这两项和前面签发jwt的设置一致
