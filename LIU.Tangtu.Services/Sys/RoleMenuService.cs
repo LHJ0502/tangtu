@@ -34,7 +34,7 @@ namespace LIU.Tangtu.Services.Sys
         /// <returns>true可以访问，false不可以访问</returns>
         public bool CheckRole(List<long> rolekeys, string url)
         {
-            return GetCacheRoleMenu().Where(p => rolekeys.Contains(p.gRoleKey)).SelectMany(p => p.Urls).Distinct().Contains(url);
+            return GetCacheRoleMenu().Where(p => rolekeys.Contains(p.gRoleKey)).SelectMany(p => p.Urls).Distinct().Contains(url.ToLower());
         }
 
 
@@ -71,7 +71,7 @@ namespace LIU.Tangtu.Services.Sys
                 cacheRoleMenus.Add(new CacheRoleMenu()
                 {
                     gRoleKey = item,
-                    Urls = list.Where(p => p.gRoleKey == item && p.y.sHref.IsNotNullOrWhiteSpace()).Select(p => p.y.sHref)
+                    Urls = list.Where(p => p.gRoleKey == item && p.y.sHref.IsNotNullOrWhiteSpace()).Select(p => p.y.sHref.ToLower())
                 });
             }
 
